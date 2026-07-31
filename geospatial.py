@@ -1,6 +1,7 @@
 import requests
 import geopandas as gpd
 import pandas as pd
+import seaborn as sns
 import matplotlib.pyplot as plt
 
 # Pull Virginia diabetes data for 2021
@@ -104,10 +105,28 @@ correlation = merged_df['diabetes_value'].corr(merged_df['obesity_value'])
 print(correlation)
 
 # Pull Maryland diabetes data
-md_diabetes = "https://data.cdc.gov/resource/em5e-5hvn.json?stateabbr=VA&measureid=DIABETES&$limit=5000"
+md_diabetes = "https://data.cdc.gov/resource/em5e-5hvn.json?stateabbr=MD&measureid=DIABETES&$limit=5000"
 response3 = requests.get(md_diabetes)
 md_diabetes_data = response3.json()
 
 df3 = pd.DataFrame(md_diabetes_data)
 df3.info()
 print(df3.head())
+
+df3['data_value'] = pd.to_numeric(df3['data_value'])
+avg_md = df3['data_value'].mean()
+print(avg_md)
+
+avg_va = df['data_value'].mean()
+print(avg_va)
+
+comparison_df = pd.DataFrame({'state': ['Virginia', 'Maryland'], 'avg_diabetes_prevalence': [avg_va, avg_md]})
+print(comparison_df)
+
+plt.figure(figsize = (6, 5))
+sns.barplot(data = comparison_df, x = 'state', y = 'avg_diabetes_prevalence', palette = 'OrRd')
+plt.title('Average Diabetes Prevalnece by State (2021)')
+plt.xlabel ('State')
+plt.ylabel('Diabetes Prevalence (%)')
+plt.ylim(10, max(avg_va, avg_md) + 0.5)
+plt.show()
