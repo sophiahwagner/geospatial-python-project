@@ -16,8 +16,6 @@ print(df.info())
 print(list(df.columns))
 print(df['data_value'])
 
-from shapely.geometry import Point
-
 # Isolate the latitude and longitude values from the geolocation column into two separate columns
 df['longitude'] = df['geolocation'].apply(lambda x: float(x['coordinates'][0]) if isinstance(x, dict) and 'coordinates' in x else None)
 df['latitude'] = df['geolocation'].apply(lambda x: float(x['coordinates'][1]) if isinstance(x, dict) and 'coordinates' in x else None)
