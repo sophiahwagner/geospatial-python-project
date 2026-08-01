@@ -38,7 +38,7 @@ print(gdf[['locationname', 'measure','data_value','geometry']].head())
 # Create a plot for diabetes prevalence in virginia in 2021
 fig, ax = plt.subplots(figsize = (8, 10))
 gdf.plot(ax = ax, column = 'data_value', cmap = 'OrRd', legend = True, legend_kwds = {'label': 'Diabetes Prevalence (%)'}, markersize = 15)
-ax.set_title("Diabetes Prevalence by Census Tract - Virginia, 2021")
+ax.set_title("Diabetes Prevalence by Census Tract - Virginia, 2021", fontweight = 'bold')
 ax.set_axis_off()
 plt.show()
 
@@ -54,10 +54,10 @@ print(list(df2.columns))
 print(df2['data_value'])
 
 # Isolate the latitude and longitude values from the geolocation column into two separate columns
-df2['longitude'] = df['geolocation'].apply(
+df2['longitude'] = df2['geolocation'].apply(
     lambda x: float(x['coordinates'][0]) if isinstance(x, dict) and 'coordinates' in x else None
 )
-df2['latitude'] = df['geolocation'].apply(
+df2['latitude'] = df2['geolocation'].apply(
     lambda x: float(x['coordinates'][1]) if isinstance(x, dict) and 'coordinates' in x else None
 )
 
@@ -71,12 +71,12 @@ gdf2 = gpd.GeoDataFrame(
     crs = 'EPSG:4326')
 
 # Create a plot for obesity prevalence in Virginia in 2021
-print(gdf[['locationname', 'measure','data_value','geometry']].head())
+print(gdf2[['locationname', 'measure','data_value','geometry']].head())
 fig, ax = plt.subplots(figsize = (8, 10))
 gdf2.plot(ax = ax, column = 'data_value', cmap = 'OrRd', legend = True, legend_kwds = {'label': 'Obesity Prevalence (%)'}, markersize = 15)
-ax.set_title("Obesity Prevalence by Census Tract - Virginia, 2021")
+ax.set_title("Obesity Prevalence by Census Tract - Virginia, 2021", fontweight = 'bold')
 ax.set_axis_off()
-##plt.show()
+plt.show()
 
 # Shrink both data frames down to include only essential, distinct columns and rename data_value columns for clarity in merged dataset
 diabetes_df = df[['locationid', 'geolocation', 'data_value']].rename(columns={'data_value': 'diabetes_value'})
@@ -104,6 +104,14 @@ gdf_merged = gpd.GeoDataFrame(
 correlation = merged_df['diabetes_value'].corr(merged_df['obesity_value'])
 print(correlation)
 
+# Plot the correlation using a regression plot
+plt.figure(figsize = (9,6))
+sns.regplot(data = merged_df, x = 'diabetes_value', y = 'obesity_value', scatter_kws={'alpha': 0.4})
+plt.title('Correlation Between Diabetes and Obesity Prevalence in Virginia in 2021', fontweight = 'bold')
+plt.xlabel('Diabetes Prevalence')
+plt.ylabel('Obesity Prevalence')
+plt.show()
+
 # Pull Maryland diabetes data
 md_diabetes = "https://data.cdc.gov/resource/em5e-5hvn.json?stateabbr=MD&measureid=DIABETES&$limit=5000"
 response3 = requests.get(md_diabetes)
@@ -129,8 +137,8 @@ print(comparison_df)
 
 # Create a bar chart comparing diabetes prevalence in MD and VA
 plt.figure(figsize = (6, 5))
-sns.barplot(data = comparison_df, x = 'state', y = 'avg_diabetes_prevalence', palette = 'OrRd')
-plt.title('Average Diabetes Prevalence by State (2021)')
+sns.barplot(data = comparison_df, x = 'state', y = 'avg_diabetes_prevalence', hue = 'state', palette = 'OrRd')
+plt.title('Average Diabetes Prevalence by State (2021)', fontweight = 'bold')
 plt.xlabel ('State')
 plt.ylabel('Diabetes Prevalence (%)')
 plt.ylim(0, max(avg_va, avg_md) + 2)
@@ -143,8 +151,8 @@ md_va_merged.info()
 
 # Use the merged dataset to build a box plot to compare the data distributions for the two states
 plt.figure(figsize = (5, 7))
-sns.boxplot(data = md_va_merged, x = 'stateabbr', y = 'data_value', palette = 'OrRd')
-plt.title('Diabetes Prevalence Distribution By State (2021)')
+sns.boxplot(data = md_va_merged, x = 'stateabbr', y = 'data_value', hue = 'stateabbr', palette = 'OrRd')
+plt.title('Diabetes Prevalence Distribution By State (2021)', fontweight = 'bold')
 plt.ylabel('Diabetes Prevalence (%)')
 plt.xlabel ('State')
 plt.show()
