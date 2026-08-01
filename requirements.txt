@@ -1,0 +1,6 @@
+pandas
+geopandas
+shapely
+seaborn
+matplotlib
+requests
