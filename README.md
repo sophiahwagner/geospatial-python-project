@@ -52,7 +52,7 @@ Real government data required some digging before the results could be trusted:
 
 ![Bar Chart With Average Diabetes Prevalence for MD and VA](md-va-comparison.png)
 
-- Despite the near-identical averages, a box plot comparison shows Virginia has a wider spread of tract-level diabetes rates than Maryland, including more low-prevalence outlier tracts. This is likely due in part to Virginia being a larger state with a higher population.
+- Despite the near-identical averages, a box plot comparison shows Virginia has a wider spread of tract-level diabetes rates than Maryland, including more low-prevalence outlier tracts.
 
 ![Prevalence Distribution Comparison](distribution-comparison.png)
 
