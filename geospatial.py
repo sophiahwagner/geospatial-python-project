@@ -40,7 +40,7 @@ fig, ax = plt.subplots(figsize = (8, 10))
 gdf.plot(ax = ax, column = 'data_value', cmap = 'OrRd', legend = True, legend_kwds = {'label': 'Diabetes Prevalence (%)'}, markersize = 15)
 ax.set_title("Diabetes Prevalence by Census Tract - Virginia, 2021")
 ax.set_axis_off()
-# plt.show()
+plt.show()
 
 ## Pull Virginia obesity data for 2021
 va_obesity = 'https://data.cdc.gov/resource/em5e-5hvn.json?stateabbr=VA&measureid=OBESITY&$limit=5000'
@@ -109,20 +109,25 @@ md_diabetes = "https://data.cdc.gov/resource/em5e-5hvn.json?stateabbr=MD&measure
 response3 = requests.get(md_diabetes)
 md_diabetes_data = response3.json()
 
+# Isolate data into a dataframe
 df3 = pd.DataFrame(md_diabetes_data)
 df3.info()
 print(df3.head())
 
+# Convert the data_value column to numeric and find the average percentage diabetes prevalence for MD as a whole
 df3['data_value'] = pd.to_numeric(df3['data_value'])
 avg_md = df3['data_value'].mean()
 print(avg_md)
 
+# Find the average diabetes prevalence for virginia
 avg_va = df['data_value'].mean()
 print(avg_va)
 
+# Create a comparison dataframe for use in bar chart
 comparison_df = pd.DataFrame({'state': ['Virginia', 'Maryland'], 'avg_diabetes_prevalence': [avg_va, avg_md]})
 print(comparison_df)
 
+# Create a bar chart comparing diabetes prevalence in MD and VA
 plt.figure(figsize = (6, 5))
 sns.barplot(data = comparison_df, x = 'state', y = 'avg_diabetes_prevalence', palette = 'OrRd')
 plt.title('Average Diabetes Prevalence by State (2021)')
@@ -131,10 +136,12 @@ plt.ylabel('Diabetes Prevalence (%)')
 plt.ylim(0, max(avg_va, avg_md) + 2)
 plt.show()
 
+# Stack the MD and VA diabetes datasets vertically
 md_va_merged = pd.concat([df, df3])
 print(md_va_merged)
 md_va_merged.info()
 
+# Use the merged dataset to build a box plot to compare the data distributions for the two states
 plt.figure(figsize = (5, 7))
 sns.boxplot(data = md_va_merged, x = 'stateabbr', y = 'data_value', palette = 'OrRd')
 plt.title('Diabetes Prevalence Distribution By State (2021)')
