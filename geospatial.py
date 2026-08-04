@@ -120,6 +120,25 @@ df3 = pd.DataFrame(md_diabetes_data)
 df3.info()
 print(df3.head())
 
+# Convert the data_value column to numeric and isolate the latitude and longitude values from the geolocation column into two separate columns
+df3['data_value'] = pd.to_numeric(df3['data_value'], errors='coerce')
+df3['longitude'] = df3['geolocation'].apply(lambda x: float(x['coordinates'][0]) if isinstance(x, dict) and 'coordinates' in x else None)
+df3['latitude'] = df3['geolocation'].apply(lambda x: float(x['coordinates'][1]) if isinstance(x, dict) and 'coordinates' in x else None)
+print(df3['latitude'],df3['longitude'])
+
+# Create a geo data frame for Maryland diabetes data
+gdf3 = gpd.GeoDataFrame(
+    data = df3, 
+    geometry = gpd.points_from_xy(df3['longitude'], df3['latitude']), 
+    crs = 'EPSG:4326')
+
+# Create a plot for diabetes data in Maryland in 2021
+fig, ax = plt.subplots(figsize = (8, 10))
+gdf3.plot(ax = ax, column = 'data_value', cmap = 'OrRd', legend = True, legend_kwds = {'label': 'Diabetes Prevalence (%)'}, markersize = 15)
+ax.set_title("Diabetes Prevalence by Census Tract - Maryland, 2021", fontweight = 'bold')
+ax.set_axis_off()
+plt.show()
+
 # Convert the data_value column to numeric and find the average percentage diabetes prevalence for MD as a whole
 df3['data_value'] = pd.to_numeric(df3['data_value'])
 avg_md = df3['data_value'].mean()
@@ -148,9 +167,12 @@ print(md_va_merged)
 md_va_merged.info()
 
 # Use the merged dataset to build a box plot to compare the data distributions for the two states
-plt.figure(figsize = (5, 7))
+plt.figure(figsize = (6, 5))
 sns.boxplot(data = md_va_merged, x = 'stateabbr', y = 'data_value', hue = 'stateabbr', palette = 'OrRd')
 plt.title('Diabetes Prevalence Distribution By State (2021)', fontweight = 'bold')
 plt.ylabel('Diabetes Prevalence (%)')
 plt.xlabel ('State')
 plt.show()
+
+correlation2 = merged_df['diabetes_value'].corr(merged_df['obesity_value'])
+print(correlation2)
