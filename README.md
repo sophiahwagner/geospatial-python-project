@@ -21,8 +21,10 @@
 
 ![Diabetes Prevalence Map](diabetes-va.png)
 
-**Obesity Prevalence by Census Tract — Virginia, 2021**
+**Diabetes Prevalence by Census Tract — Maryland, 2021**
+![Obesity Prevalence Map] (diabetes-md.png)
 
+**Obesity Prevalence by Census Tract — Virginia, 2021**
 ![Obesity Prevalence Map](obesity-va.png)
 
 ## Key Implementations
